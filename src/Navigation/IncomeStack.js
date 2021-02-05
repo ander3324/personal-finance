@@ -1,22 +1,22 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import Dashboard from '../Views/Finances/Dashboard';
+import Income from '../Views/Incomes/Incomes.js';
 
 const Stack = createStackNavigator();
 
-export default function DashboardStack() {
+export default function IncomeStack() {
   return (
     <Stack.Navigator>
       <Stack.Screen 
-        component={Dashboard}
-        name="dashboard"
-        options={{ 
+        component={Income}
+        name="income"
+        options={{
           headerStyle: {
-            backgroundColor: "#00363a"
+            backgroundColor: "#004ba0"
           },
           headerTintColor: "#fff",
-          headerTitle: "Dashboard",
+          headerTitle: "Mis Ingresos",
           headerTitleStyle: {
             fontWeight: "bold"
           }

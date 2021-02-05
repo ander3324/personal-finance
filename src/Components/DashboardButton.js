@@ -16,14 +16,14 @@ export default function DashboardButton() {
         }
       }   
     >
-      <Icon name="home" color="#fff" size={30} />
+      <Icon name="dashboard" color="#fff" size={30} />
     </TouchableHighlight>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#25D366",
+    backgroundColor: "#00600f",
     alignItems: "center",
     justifyContent: "center",
     width: 72,

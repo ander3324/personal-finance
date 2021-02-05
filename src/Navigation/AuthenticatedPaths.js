@@ -5,6 +5,8 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { Icon } from 'react-native-elements';
 
 import DashboardStack from './DashboardStack';
+import IncomeStack from './IncomeStack';
+import ExpenseStack from './ExpenseStack';
 import DashboardButton from '../Components/DashboardButton';
 
 const Tab = createBottomTabNavigator();
@@ -31,22 +33,24 @@ const TabBar = () => {
     >
 
       <Tab.Screen
-        component={DashboardStack}
-        name="uno"
-        options={{ title: "Uno" }}
-      />
-      <Tab.Screen
-        component={DashboardStack}
-        name="dashboard"
+        component={IncomeStack}
+        name="income"
         options={{ 
-          title: "Inicio",
-          tabBarIcon: () => <DashboardButton />
+          title: "Ingresos"
         }}
       />
       <Tab.Screen
         component={DashboardStack}
-        name="dos"
-        options={{ title: "Dos" }}
+        name="dashboard"
+        options={{
+          title: "",
+          tabBarIcon: () => <DashboardButton />
+        }}
+      />
+      <Tab.Screen
+        component={ExpenseStack}
+        name="expense"
+        options={{ title: "Gastos" }}
       />
       
     </Tab.Navigator>
@@ -59,7 +63,13 @@ function mostrarIcono(route, color) {
 
   switch (route.name) {
     case "dashboard":
-      iconName = "cart-outline";
+      iconName = "chart-line";
+      break;
+    case "income":
+      iconName = "cash-plus";
+      break;
+    case "expense":
+      iconName = "cash-minus";
       break;
   }
 

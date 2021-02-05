@@ -8,6 +8,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@mdi/font": "^5.9.55",
     "@react-native-community/masked-view": "0.1.10",
     "@react-navigation/bottom-tabs": "~5.2.6",
     "@react-navigation/drawer": "~5.9.0",
