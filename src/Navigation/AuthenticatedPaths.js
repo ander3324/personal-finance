@@ -1,4 +1,5 @@
 import React from 'react';
+import { StyleSheet } from "react-native";
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -19,13 +20,7 @@ const TabBar = () => {
       tabBarOptions={{
         inactiveTintColor: "#fff",
         activeTintColor: "#fff",
-        style: {
-          borderTopLeftRadius: 60,
-          borderTopRightRadius: 60,
-          alignItems: "center",
-          backgroundColor: "#128C7E",
-          paddingBottom: 5
-        }
+        style: styles.tabBarPrimary
       }}
       screenOptions={ ({ route }) => ({
         tabBarIcon: ({ color }) => mostrarIcono(route, color)
@@ -85,3 +80,11 @@ export default function AuthenticatedPaths() {
     </NavigationContainer>
   );
 }
+
+const styles = StyleSheet.create({
+  tabBarPrimary: {
+    alignItems: "center",
+    backgroundColor: "#01579b",
+    paddingBottom: 5
+  }
+});
