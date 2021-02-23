@@ -16,7 +16,7 @@ export default function DashboardStack() {
             backgroundColor: "#00363a"
           },
           headerTintColor: "#fff",
-          headerTitle: "Dashboard",
+          headerTitle: "Mis Finanzas",
           headerTitleStyle: {
             fontWeight: "bold"
           }

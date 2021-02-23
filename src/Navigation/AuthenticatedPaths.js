@@ -8,7 +8,7 @@ import { Icon } from 'react-native-elements';
 import DashboardStack from './DashboardStack';
 import IncomeStack from './IncomeStack';
 import ExpenseStack from './ExpenseStack';
-import DashboardButton from '../Components/DashboardButton';
+import ProfileStack from "./ProfileStack";
 
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -26,7 +26,14 @@ const TabBar = () => {
         tabBarIcon: ({ color }) => mostrarIcono(route, color)
       }) }
     >
-
+      
+      <Tab.Screen
+        component={DashboardStack}
+        name="dashboard"
+        options={{
+          title: "Inicio"
+        }}
+      />
       <Tab.Screen
         component={IncomeStack}
         name="income"
@@ -35,17 +42,14 @@ const TabBar = () => {
         }}
       />
       <Tab.Screen
-        component={DashboardStack}
-        name="dashboard"
-        options={{
-          title: "",
-          tabBarIcon: () => <DashboardButton />
-        }}
-      />
-      <Tab.Screen
         component={ExpenseStack}
         name="expense"
         options={{ title: "Gastos" }}
+      />
+      <Tab.Screen
+        component={ProfileStack}
+        name="profile"
+        options={{ title: "Cuenta" }}
       />
       
     </Tab.Navigator>
@@ -65,6 +69,9 @@ function mostrarIcono(route, color) {
       break;
     case "expense":
       iconName = "cash-minus";
+      break;
+    case "profile":
+      iconName = "account-outline";
       break;
   }
 
