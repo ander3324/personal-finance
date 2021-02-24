@@ -9,6 +9,7 @@ import DashboardStack from './DashboardStack';
 import IncomeStack from './IncomeStack';
 import ExpenseStack from './ExpenseStack';
 import ProfileStack from "./ProfileStack";
+import { StatusBar } from 'react-native';
 
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -91,7 +92,7 @@ export default function AuthenticatedPaths() {
 const styles = StyleSheet.create({
   tabBarPrimary: {
     alignItems: "center",
-    backgroundColor: "#01579b",
+    backgroundColor: "#0093c4",
     paddingBottom: 5
   }
 });

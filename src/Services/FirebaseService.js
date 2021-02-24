@@ -18,3 +18,7 @@ export const validarSesion = (setUserAuth) => {
   export const cerrarSesion = () => {
     firebase.auth().signOut();
   };
+
+  export const obtenerUsuario = () => {
+    return firebase.auth().currentUser;
+  };
