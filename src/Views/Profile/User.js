@@ -3,11 +3,11 @@ import { StyleSheet, Text, View, StatusBar, Alert, Button } from 'react-native';
 import { Icon, Avatar, Input } from "react-native-elements";
 import { useFocusEffect } from "@react-navigation/native";
 
-import CodeInput from "react-native-code-input";
+//import CodeInput from "react-native-code-input";
 
 import { cerrarSesion } from '../../Services/FirebaseService';
-import { validarEmail } from "../../Utils/Utils";
-import { obtenerUsuario } from "../../Services/FirebaseService";
+import { validarEmail, cargarImagenesPorAspecto } from "../../Utils/Utils";
+import { obtenerUsuario, actualizarPerfil, addRegistroEspecifico, subirImagenesBatch } from "../../Services/FirebaseService";
 import Loading from "../../Components/Loading";
 import Modal from "../../Components/Modal";
 //import FirebaseRecaptcha from "../../Utils/FirebaseRecaptcha";
@@ -34,10 +34,17 @@ export default function User() {
 
     return (
         <View>
-             <StatusBar backgroundColor = "#4ba3c7" />
-             <CabeceraBG style = { styles.bg } />
+            <StatusBar backgroundColor = "#4ba3c7" />
+            <CabeceraBG style = { styles.bg } />
+            <HeaderAvatar 
+              usuario = { usuario }
+              imagenPerfil = { imagenPerfil }
+              setImagenPerfil = { setImagenPerfil }
+              setLoading = { setLoading }
+            />
             <Text>Mi Perfil</Text>
             <Button title = "Cerrar Sesión" onPress = { () => cerrarSesion() } />
+            <Loading isVisible = { loading } text = "Actualizando perfil ..." />
         </View>
     )
 }
@@ -49,12 +56,54 @@ function CabeceraBG(props) {
       <View>
         <View style={styles.bg}>
           <Text style={{ color: "#fff", fontSize: 18, fontWeight: "bold" }}>
-            { nombre }
+            { nombre ? nombre : "Sin Nombre" }
           </Text>
         </View>
       </View>
     );
   }
+
+  function HeaderAvatar(props) {
+    const { usuario, setImagenPerfil, imagenPerfil, setLoading } = props;
+    const { uid } = usuario;
+  
+    const cambiarfoto = async () => {
+      const resultado = await cargarImagenesPorAspecto([1, 1]);
+      if (resultado.status) {
+        setLoading(true);
+        const url = await subirImagenesBatch([resultado.imagen], "Perfil");
+        const update = await actualizarPerfil({ photoURL: url[0] });
+        const response = await addRegistroEspecifico("Usuarios", uid, {
+          photoURL: url[0],
+        });
+  
+        if (response.statusResponse) {
+          setImagenPerfil(url[0]);
+          setLoading(false);
+        } else {
+          setLoading(false);
+          alert("Ha ocurrido un error al actualizar la foto de perfil.");
+        }
+      }
+    };
+    return (
+      <View style={styles.avatarInline}>
+        <Avatar
+          source={
+            imagenPerfil
+              ? { uri: imagenPerfil }
+              : require("../../../assets/avatar.jpg")
+          }
+          style={styles.avatar}
+          size="large"
+          rounded
+          showAccessory={true}
+          onAccessoryPress={cambiarfoto}
+        />
+      </View>
+    );
+  }
+
   
   const styles = StyleSheet.create({
     bg: {
@@ -66,7 +115,7 @@ function CabeceraBG(props) {
       justifyContent: "center",
       alignItems: "center",
     },
-    avatarinline: {
+    avatarInline: {
       flexDirection: "row",
       justifyContent: "space-around",
       marginTop: -70,
@@ -80,7 +129,7 @@ function CabeceraBG(props) {
       width: "100%",
       alignItems: "center",
     },
-    titulomodal: {
+    tituloModal: {
       fontWeight: "bold",
       fontSize: 18,
       marginTop: 20,
@@ -90,7 +139,7 @@ function CabeceraBG(props) {
       fontSize: 14,
       textAlign: "center",
     },
-    btncontainer: {
+    btnContainer: {
       position: "relative",
       bottom: 10,
       right: 10,
