@@ -4,9 +4,11 @@ import { Icon, Input, Button, Divider } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 
 import { isEmpty, split } from "lodash";
+import * as firebase from "firebase";
 
 import Loading from "../Components/Loading";
 import { validarEmail } from "../Utils/Utils";
+import { validarSesion, cerrarSesion } from "../Services/FirebaseService";
 
 export default function LoginForm(props) {
 
@@ -18,6 +20,10 @@ export default function LoginForm(props) {
     const [show, setShow] = useState(false);
     const [loading, setLoading] = useState(false);
 
+
+    //cerrarSesion();
+    //console.log(validarSesion(email, password), `Bienvenido ${firebase.auth().currentUser}`);
+
     const iniciarSesion = () => {
         if (isEmpty(email) || isEmpty(password)) {
             toastRef.current.show("El email y la contraseña no pueden estar vacíos.");
@@ -27,8 +33,18 @@ export default function LoginForm(props) {
             setLoading(true);
 
             //Firebase Login
+            firebase.auth().signInWithEmailAndPassword(email, password)
+            .then(() => {
+                setLoading(false);
+            }).catch((err) => {
+                setLoading(false);
+                toastRef.current.show("Email o contraseña incorrectos.");
+            })
         }
     }
+
+    //console.log(validarSesion(email, password), `Bienvenido ${firebase.auth().currentUser.email}`);
+
 
     return (
         <View style = { styles.container }>
