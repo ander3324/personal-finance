@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet } from 'react-native';
 import AuthenticatedPaths from "./AuthenticatedPaths";
 import { validarSesion } from "../Services/FirebaseService";
 import Loading from '../Components/Loading';
@@ -22,5 +21,3 @@ export default function SwitchNavigator() {
         return userAuth ? <AuthenticatedPaths /> : <></>
     }
 }
-
-const styles = StyleSheet.create({})

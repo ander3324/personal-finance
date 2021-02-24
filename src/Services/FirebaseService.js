@@ -14,19 +14,7 @@ export const validarSesion = (setUserAuth) => {
       }
     });
   };
-
-/*   export const validarSesion = () => {
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        //setValidarSesion(true);
-        console.log("Usuario logueado");
-      } else {
-        //setValidarSesion(false);
-        console.log("No ha iniciado sesión");
-      }
-    });
-  }; */
-
+  
   export const cerrarSesion = () => {
     firebase.auth().signOut();
   };
