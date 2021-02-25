@@ -97,7 +97,7 @@ export default function LoginForm(props) {
                 <Text 
                     style = { styles.txtRegistrate }
                     onPress = {
-                        () => Alert.alert("Registrarse")
+                        () => navigation.navigate("signin")
                     }
                 >
                     { " " }
