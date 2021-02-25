@@ -82,3 +82,15 @@ export const validarSesion = (setUserAuth) => {
   
     return respuesta;
   };
+
+  export const actualizarEmailFirebase = async (email) => {
+    let response = { statusResponse: false };
+    await firebase
+      .auth()
+      .currentUser.updateEmail(email)
+      .then((respuesta) => {
+        response.statusResponse = true;
+      })
+      .catch((err) => (response.statusResponse = false));
+    return response;
+  };
