@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, Text, View, StatusBar, Alert, Button } from 'react-native';
 import { Icon, Avatar, Input } from "react-native-elements";
 import { useFocusEffect } from "@react-navigation/native";
@@ -7,9 +7,15 @@ import { useFocusEffect } from "@react-navigation/native";
 
 import { cerrarSesion } from '../../Services/FirebaseService';
 import { validarEmail, cargarImagenesPorAspecto } from "../../Utils/Utils";
-import { obtenerUsuario, actualizarPerfil, addRegistroEspecifico, subirImagenesBatch } from "../../Services/FirebaseService";
+import { 
+  obtenerUsuario, 
+  actualizarPerfil, 
+  actualizarEmailFirebase, 
+  addRegistroEspecifico, 
+  subirImagenesBatch } from "../../Services/FirebaseService";
 import Loading from "../../Components/Loading";
 import Modal from "../../Components/Modal";
+import InputEditable from "../../Components/InputEditable";
 //import FirebaseRecaptcha from "../../Utils/FirebaseRecaptcha";
 
 export default function User() {
@@ -30,19 +36,63 @@ export default function User() {
         const { displayName, email } = usuario;
         setDisplayName(displayName);
         setEmail(email);
+        console.log(usuario);
     }, []);
+
+    const onChangeInput = (input, valor) => {
+      switch (input) {
+        case "displayName":
+          setDisplayName(valor);
+          break;
+        case "email":
+          setEmail(valor);
+          break;
+      }
+    }
+
+    const obtenerValor = (input) => {
+      switch (input) {
+        case "displayName":
+          return displayName;
+          break;
+        case "email":
+          return email;
+          break;
+      }
+    }
+
+    const actualizarValor = async (input, valor) => {
+      switch (input) {
+        case "displayName":
+          addRegistroEspecifico("Usuarios", usuario.uid, { displayName: valor });
+          break;
+        case "email":
+
+        if(validarEmail(valor))
+          actualizarEmailFirebase(valor);
+        break;
+      }
+    }
 
     return (
         <View>
             <StatusBar backgroundColor = "#4ba3c7" />
-            <CabeceraBG style = { styles.bg } />
+            <CabeceraBG style = { styles.bg } nombre = { displayName } />
             <HeaderAvatar 
               usuario = { usuario }
               imagenPerfil = { imagenPerfil }
               setImagenPerfil = { setImagenPerfil }
               setLoading = { setLoading }
             />
-            <Text>Mi Perfil</Text>
+            <FormDatos 
+              onChangeInput = { onChangeInput }
+              obtenerValor = { obtenerValor }
+              editEmail = { editEmail }
+              editName = { editName }
+              setEditEmail = { setEditEmail }
+              setEditName = { setEditName }
+              actualizarValor = { actualizarValor }
+            />
             <Button title = "Cerrar Sesión" onPress = { () => cerrarSesion() } />
             <Loading isVisible = { loading } text = "Actualizando perfil ..." />
         </View>
@@ -104,6 +154,41 @@ function CabeceraBG(props) {
     );
   }
 
+  function FormDatos(props) {
+    const {
+      onChangeInput,
+      obtenerValor,
+      editEmail,
+      editName,
+      setEditEmail,
+      setEditName,
+      actualizarValor,
+    } = props;
+    return (
+      <View>
+        <InputEditable
+          id="displayName"
+          label="Nombre"
+          obtenerValor={obtenerValor}
+          placeholder="Nombre"
+          onChangeInput={ onChangeInput }
+          editable = { editName }
+          setEditable={setEditName}
+          actualizarValor={actualizarValor}
+        />
+        <InputEditable
+          id="email"
+          label="Correo"
+          obtenerValor={obtenerValor}
+          placeholder="ejemplo@ejemplo.com"
+          onChangeInput={onChangeInput}
+          editable={editEmail}
+          setEditable={setEditEmail}
+          actualizarValor={actualizarValor}
+        />
+      </View>
+    );
+  }
   
   const styles = StyleSheet.create({
     bg: {

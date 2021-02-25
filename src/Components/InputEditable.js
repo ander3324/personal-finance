@@ -10,12 +10,12 @@ export default function InputEditable(props) {
     obtenerValor,
     id,
     editable,
-    seteditable,
+    setEditable,
     actualizarValor
   } = props;
 
   const editar = () => {
-    seteditable(!editable);
+    setEditable(!editable);
   };
 
   return (
