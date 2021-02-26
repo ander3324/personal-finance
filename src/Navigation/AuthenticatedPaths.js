@@ -9,7 +9,6 @@ import DashboardStack from './DashboardStack';
 import IncomeStack from './IncomeStack';
 import ExpenseStack from './ExpenseStack';
 import ProfileStack from "./ProfileStack";
-import { StatusBar } from 'react-native';
 
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -83,6 +82,7 @@ function mostrarIcono(route, color) {
 
 export default function AuthenticatedPaths() {
   return (
+    
     <NavigationContainer>
       <TabBar />
     </NavigationContainer>

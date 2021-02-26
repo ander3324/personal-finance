@@ -13,7 +13,7 @@ export default function IncomeStack() {
         name="income"
         options={{
           headerStyle: {
-            backgroundColor: "#004ba0"
+            backgroundColor: "#4f9a94"
           },
           headerTintColor: "#fff",
           headerTitle: "Mis Ingresos",
