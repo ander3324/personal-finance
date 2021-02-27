@@ -60,22 +60,23 @@ export default function Incomes() {
             underlayColor="#128c7e"
           >
             <View style={{ flexDirection: "row" }}>
-              <View style={{ 
-                flex: 0.2
-              }}>
-                <Text style = {{
-                  fontSize: 15,
-                  fontWeight: "bold"
-                }}>
+              <View style={ styles.calendarCell }>
+                <Text style = { styles.calendarText }>
                   {item.fecha}
                 </Text>
               </View>
               <View style={{ flex: 0.7 }}>
-                <Text>{item.categoria}</Text>
-                <Text>{item.concepto}</Text>
+                <Text style = { styles.categoryCell }>
+                  {item.categoria}
+                </Text>
+                <Text style = { styles.descriptionCell }>
+                  {item.concepto}
+                </Text>
               </View>
               <View style={{ flex: 0.3 }}>
-                <Text>${item.monto.toFixed(2)}</Text>
+                <Text style = { styles.amountCell }>
+                  ${item.monto.toFixed(2)}
+                </Text>
               </View>
             </View>
           </TouchableHighlight>
@@ -126,19 +127,61 @@ const styles = StyleSheet.create({
   },
   card: {
     width: "100%",
-    paddingVertical: 20,
+    paddingVertical: 0,
     flex: 1,
-    paddingHorizontal: 10,
-    marginHorizontal: 5,
+    marginHorizontal: 0,
     borderBottomColor: "#128c7e",
     borderBottomWidth: 1,
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
+    fontFamily: "Roboto"
   },
   vline: {
     height: 100,
     width: 3,
     backgroundColor: "#128c7e",
   },
+  calendarCell: { 
+    flex: 0.2,
+    marginRight: 10,
+    borderStyle: "solid",
+    borderColor: "#128c7e",
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingVertical: 5,
+    paddingHorizontal: 5,
+    margin: 5
+  },
+  calendarText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#128c7e"
+  },
+  categoryCell: {
+    fontSize: 12,
+    fontWeight: "bold",
+    fontStyle: "italic",
+    marginTop: 10,
+    borderBottomWidth: 0.3,
+    borderBottomColor: "#616161",
+    color: "#616161",
+    textAlign: "right",
+    paddingHorizontal: 20 
+  },
+  descriptionCell: {
+    fontSize: 17,
+    color: "#616161",
+    alignSelf: "stretch",
+    marginTop: 5
+  },
+  amountCell: {
+    alignSelf: "flex-end",
+    paddingHorizontal: 5,
+    paddingVertical: 10,
+    fontWeight: "normal",
+    borderLeftWidth: 0.3,
+    borderLeftColor: "#616161",
+    marginVertical: 10
+  }
 });
