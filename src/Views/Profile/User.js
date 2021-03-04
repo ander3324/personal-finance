@@ -81,7 +81,7 @@ export default function User() {
   };
 
   return (
-    <View>
+    <View >
       <StatusBar backgroundColor="#4ba3c7" />
       <CabeceraBG style={styles.bg} nombre={displayName} />
       <HeaderAvatar

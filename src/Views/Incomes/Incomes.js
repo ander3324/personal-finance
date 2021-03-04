@@ -7,16 +7,49 @@ import {
   StyleSheet,
   TouchableOpacity,
   TouchableHighlight,
-  Alert,
+  Alert
 } from "react-native";
+import { Icon } from "react-native-elements";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 
 import { size } from "lodash";
 import moment from "moment/min/moment-with-locales";
+import { useWindowDimensions } from "react-native";
 
 export default function Incomes() {
+
   moment.locale("es");
+  const navigation = useNavigation();
+
   const incomes = [
+    {
+      key: 1,
+      fecha: moment(new Date()).format("dd DD MMM YY"),
+      concepto: "Sueldo Mensual",
+      monto: 120000,
+      categoria: "Sueldos",
+    },
+    {
+      key: 2,
+      fecha: moment(new Date()).format("dd DD MMM YY"),
+      concepto: "Aguinaldo",
+      monto: 60000,
+      categoria: "Sueldos",
+    },
+    {
+      key: 3,
+      fecha: moment(new Date()).format("dd DD MMM YY"),
+      concepto: "Cobro App",
+      monto: 360000,
+      categoria: "Sueldos",
+    },
+    {
+      key: 4,
+      fecha: moment(new Date()).format("dd DD MMM YY"),
+      concepto: "Ingreso Alquiler",
+      monto: 120000,
+      categoria: "Sueldos",
+    },
     {
       key: 1,
       fecha: moment(new Date()).format("dd DD MMM YY"),
@@ -48,7 +81,7 @@ export default function Incomes() {
   ];
 
   return (
-    <View>
+    <View style = {{ flex: 1, justifyContent: "center" }}>
       <StatusBar backgroundColor="#4f9a94" />
       <FlatList
         data={incomes}
@@ -57,7 +90,7 @@ export default function Incomes() {
             style={styles.card}
             key={item.key}
             onPress={() => Alert.alert(item.concepto)}
-            underlayColor="#128c7e"
+            underlayColor="#0093c4"
           >
             <View style={{ flexDirection: "row" }}>
               <View style={ styles.calendarCell }>
@@ -65,7 +98,7 @@ export default function Incomes() {
                   {item.fecha}
                 </Text>
               </View>
-              <View style={{ flex: 0.7 }}>
+              <View style={{ flex: 0.6 }}>
                 <Text style = { styles.categoryCell }>
                   {item.categoria}
                 </Text>
@@ -73,9 +106,9 @@ export default function Incomes() {
                   {item.concepto}
                 </Text>
               </View>
-              <View style={{ flex: 0.3 }}>
+              <View style={{ flex: 0.4 }}>
                 <Text style = { styles.amountCell }>
-                  ${item.monto.toFixed(2)}
+                  ${item.monto.toFixed(2).toString()}
                 </Text>
               </View>
             </View>
@@ -88,8 +121,20 @@ export default function Incomes() {
             </Text>
           
         } */
+        
+      />
+      <Icon 
+        name = "plus"
+        type = "material-community"
+        color = "#0093c4"
+        containerStyle = { styles.btnAddContainer }
+        onPress = {
+          () => { navigation.navigate("add-income"); } 
+        }
+        reverse
       />
     </View>
+    
   );
 }
 
@@ -127,26 +172,29 @@ const styles = StyleSheet.create({
   },
   card: {
     width: "100%",
-    paddingVertical: 0,
     flex: 1,
     marginHorizontal: 0,
-    borderBottomColor: "#128c7e",
-    borderBottomWidth: 1,
+    borderColor: "#0093c4",
+    borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
-    fontFamily: "Roboto"
+    fontFamily: "Roboto",
+    borderRadius: 10,
+    paddingVertical: 5,
+    marginHorizontal: 0,
+    marginVertical: 5
   },
   vline: {
     height: 100,
     width: 3,
-    backgroundColor: "#128c7e",
+    backgroundColor: "#0093c4",
   },
   calendarCell: { 
     flex: 0.2,
     marginRight: 10,
     borderStyle: "solid",
-    borderColor: "#128c7e",
+    borderColor: "#0093c4",
     borderWidth: 1,
     borderRadius: 5,
     paddingVertical: 5,
@@ -156,7 +204,7 @@ const styles = StyleSheet.create({
   calendarText: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#128c7e"
+    color: "#0093c4"
   },
   categoryCell: {
     fontSize: 12,
@@ -179,9 +227,18 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
     paddingHorizontal: 5,
     paddingVertical: 10,
-    fontWeight: "normal",
+    fontWeight: "bold",
     borderLeftWidth: 0.3,
     borderLeftColor: "#616161",
     marginVertical: 10
+  },
+  btnAddContainer: {
+    flex: 1,
+    position: "absolute",
+    bottom: 10,
+    right: 10,
+    shadowColor: "#000000",
+    shadowOffset: { width: 2, height: 2 },
+    shadowOpacity: 0.2
   }
 });
