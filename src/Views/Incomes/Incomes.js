@@ -51,28 +51,28 @@ export default function Incomes() {
       categoria: "Sueldos",
     },
     {
-      key: 1,
+      key: 5,
       fecha: moment(new Date()).format("dd DD MMM YY"),
       concepto: "Sueldo Mensual",
       monto: 120000,
       categoria: "Sueldos",
     },
     {
-      key: 2,
+      key: 6,
       fecha: moment(new Date()).format("dd DD MMM YY"),
       concepto: "Aguinaldo",
       monto: 60000,
       categoria: "Sueldos",
     },
     {
-      key: 3,
+      key: 7,
       fecha: moment(new Date()).format("dd DD MMM YY"),
       concepto: "Cobro App",
       monto: 360000,
       categoria: "Sueldos",
     },
     {
-      key: 4,
+      key: 8,
       fecha: moment(new Date()).format("dd DD MMM YY"),
       concepto: "Ingreso Alquiler",
       monto: 120000,
@@ -92,10 +92,12 @@ export default function Incomes() {
             onPress={() => Alert.alert(item.concepto)}
             underlayColor="#0093c4"
           >
-            <View style={{ flexDirection: "row" }}>
+            <View style={{ 
+              flexDirection: "row" 
+            }}>
               <View style={ styles.calendarCell }>
                 <Text style = { styles.calendarText }>
-                  {item.fecha}
+                  {"  " + item.fecha}
                 </Text>
               </View>
               <View style={{ flex: 0.6 }}>
@@ -126,7 +128,7 @@ export default function Incomes() {
       <Icon 
         name = "plus"
         type = "material-community"
-        color = "#0093c4"
+        color = "#4f9a94"
         containerStyle = { styles.btnAddContainer }
         onPress = {
           () => { navigation.navigate("add-income"); } 
@@ -169,7 +171,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     height: 44,
     backgroundColor: "#FFFFFF",
-  },
+  }/* ,
   card: {
     width: "100%",
     flex: 1,
@@ -184,6 +186,17 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     marginHorizontal: 0,
     marginVertical: 5
+  } */,
+  card: {
+    width: "100%",
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+    fontFamily: "Roboto",
+    paddingVertical: 5,
+    borderBottomColor: "#cfcfcf",
+    borderBottomWidth: 0.2
   },
   vline: {
     height: 100,
@@ -193,18 +206,21 @@ const styles = StyleSheet.create({
   calendarCell: { 
     flex: 0.2,
     marginRight: 10,
-    borderStyle: "solid",
-    borderColor: "#0093c4",
+    backgroundColor: "#4f9a94",
+    borderColor: "#4f9a94",
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 40,
     paddingVertical: 5,
     paddingHorizontal: 5,
-    margin: 5
+    paddingLeft: 5,
+    marginLeft: 5,
+    height: 70,
+    justifyContent: "center"
   },
   calendarText: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#0093c4"
+    color: "#f5f5f5"
   },
   categoryCell: {
     fontSize: 12,
@@ -235,7 +251,7 @@ const styles = StyleSheet.create({
   btnAddContainer: {
     flex: 1,
     position: "absolute",
-    bottom: 10,
+    bottom: 50,
     right: 10,
     shadowColor: "#000000",
     shadowOffset: { width: 2, height: 2 },
