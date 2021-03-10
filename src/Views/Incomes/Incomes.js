@@ -85,6 +85,7 @@ export default function Incomes() {
       <StatusBar backgroundColor="#4f9a94" />
       <FlatList
         data={incomes}
+        contentContainerStyle={{ paddingBottom: 80 }}
         renderItem={({ item, index, renderSeparator }) => (
           <TouchableHighlight
             style={styles.card}
@@ -116,14 +117,6 @@ export default function Incomes() {
             </View>
           </TouchableHighlight>
         )}
-        /* renderItem={
-          ({item}) => 
-            <Text style={styles.item}>
-              {item.fecha} | {item.concepto} | {item.monto}
-            </Text>
-          
-        } */
-        
       />
       <Icon 
         name = "plus"
@@ -171,22 +164,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     height: 44,
     backgroundColor: "#FFFFFF",
-  }/* ,
-  card: {
-    width: "100%",
-    flex: 1,
-    marginHorizontal: 0,
-    borderColor: "#0093c4",
-    borderWidth: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    flexDirection: "row",
-    fontFamily: "Roboto",
-    borderRadius: 10,
-    paddingVertical: 5,
-    marginHorizontal: 0,
-    marginVertical: 5
-  } */,
+  },
   card: {
     width: "100%",
     flex: 1,
@@ -194,9 +172,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flexDirection: "row",
     fontFamily: "Roboto",
-    paddingVertical: 5,
     borderBottomColor: "#cfcfcf",
-    borderBottomWidth: 0.2
+    borderBottomWidth: 0.2,
+    paddingTop: 10,
+    paddingBottom: 10
   },
   vline: {
     height: 100,
@@ -207,20 +186,20 @@ const styles = StyleSheet.create({
     flex: 0.2,
     marginRight: 10,
     backgroundColor: "#4f9a94",
-    borderColor: "#4f9a94",
+    borderColor: "#CCC",
     borderWidth: 1,
-    borderRadius: 40,
+    borderRadius: 20,
     paddingVertical: 5,
     paddingHorizontal: 5,
     paddingLeft: 5,
     marginLeft: 5,
-    height: 70,
     justifyContent: "center"
   },
   calendarText: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "bold",
-    color: "#f5f5f5"
+    color: "#f5f5f5",
+    marginLeft: 3
   },
   categoryCell: {
     fontSize: 12,
@@ -251,7 +230,7 @@ const styles = StyleSheet.create({
   btnAddContainer: {
     flex: 1,
     position: "absolute",
-    bottom: 50,
+    bottom: 10,
     right: 10,
     shadowColor: "#000000",
     shadowOffset: { width: 2, height: 2 },
