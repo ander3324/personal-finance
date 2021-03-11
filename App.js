@@ -14,7 +14,9 @@ export default function App() {
     "Setting a timer",
     "Avatar.onAccessoryPress",
     "Avatar.showAccessory",
-    "Can't perform"
+    "Can't perform",
+    "failed Child",
+    "Possible Unhandled"
   ]);
 
   const [user, setUser] = useState(false);
