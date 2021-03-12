@@ -2,6 +2,7 @@ import { Platform } from "react-native";
 import { firebaseapp } from "../Utils/Firebase";
 import * as firebase from "firebase";
 import "firebase/firestore";
+import { FireSQL } from "firesql";
 
 import uuid from "random-uuid-v4";
 import * as Permissions from "expo-permissions";
@@ -94,3 +95,37 @@ export const validarSesion = (setUserAuth) => {
       .catch((err) => (response.statusResponse = false));
     return response;
   };
+
+  export const addRegistro = async (coleccion, datos) => {
+    const resultado = { error: "", statusResponse: false };
+    await db
+    .collection(coleccion)
+    .add(datos)
+    .then((response) => {
+      resultado.statusResponse = true;
+    })
+    .catch((err) => {
+      resultado.error = err;
+    });
+    return resultado;
+  }
+
+  export const findAllIncomes = async () => {
+    let incomes = [];
+    await db.collection("Incomes")
+    .where("usuario", "==", obtenerUsuario().uid)
+    .where("status", "==", 1)
+    .get()
+    .then((response) => {
+      response.forEach((doc) => {
+        let income = doc.data();
+        income.id = doc.id;
+        incomes.push(income);
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+    console.log(incomes);
+    return incomes;
+  }

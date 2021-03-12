@@ -15,13 +15,35 @@ import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { size } from "lodash";
 import moment from "moment/min/moment-with-locales";
 import { useWindowDimensions } from "react-native";
+import { findAllIncomes } from "../../Services/FirebaseService";
 
 export default function Incomes() {
 
   moment.locale("es");
   const navigation = useNavigation();
 
-  const incomes = [
+  const [incomes, setIncomes] = useState({});
+
+      async () => setIncomes(await findAllIncomes());
+  console.log(
+    incomes
+  );
+  /* useEffect(() => {
+    (async () => {
+      setIncomes(await findAllIncomes());
+    })();
+  }, []);
+
+ 
+  useFocusEffect(
+    useCallback(() => {
+      (async () => {
+        setIncomes(await findAllIncomes());
+      })();
+    }, [])
+  ); */
+
+  /* const incomes = [
     {
       key: 1,
       fecha: moment(new Date()).format("dd DD MMM YY"),
@@ -78,7 +100,9 @@ export default function Incomes() {
       monto: 120000,
       categoria: "Sueldos",
     },
-  ];
+  ]; */
+
+  
 
   return (
     <View style = {{ flex: 1, justifyContent: "center" }}>
@@ -98,7 +122,7 @@ export default function Incomes() {
             }}>
               <View style={ styles.calendarCell }>
                 <Text style = { styles.calendarText }>
-                  {"  " + item.fecha}
+                  {"  " + item.date}
                 </Text>
               </View>
               <View style={{ flex: 0.6 }}>

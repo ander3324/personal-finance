@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Alert, StyleSheet, Text, View } from "react-native";
 import { Input, Button, Icon } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 
@@ -8,17 +8,22 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import moment from "moment/min/moment-with-locales";
 
 import Loading from "../../Components/Loading";
-import { obtenerUsuario } from "../../Services/FirebaseService";
+import { addRegistro, obtenerUsuario } from "../../Services/FirebaseService";
 import { Keyboard } from "react-native";
 import { TouchableWithoutFeedback } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { isEmpty } from "lodash";
 
 export default function NewIncome() {
   const navigation = useNavigation();
 
-  const [categoria, setCategoria] = useState("")
+  const [categoria, setCategoria] = useState("");
+  const [concepto, setConcepto] = useState("");
+  const [monto, setMonto] = useState(0.0);
   const [date, setDate] = useState(new Date());
   const [showDateDialog, setShowDateDialog] = useState(false);
+  const [errores, setErrores] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const showDatepicker = () => {
     setShowDateDialog(true);
@@ -31,37 +36,76 @@ export default function NewIncome() {
     setDate(currentDate);
   };
 
+  const addIncome = async () => {
+    setErrores({});
+    if(isEmpty(concepto)) {
+      setErrores({concepto: "Ingrese una descripción."});
+    } else if (!parseFloat(monto) > 0) {
+      setErrores({monto: "Ingrese el monto."});
+    } else if (isEmpty(categoria)) {
+      Alert.alert("Error", "Seleccione la categoría.", [{style: "cancel", text: "Ok"}]);
+    } else {
+      setLoading(true);
+      
+      //Crear ingreso:
+      const income = {
+        date,
+        concepto,
+        monto,
+        categoria,
+        usuario: obtenerUsuario().uid,
+        status: 1
+      };
+
+      const recordEntry = await addRegistro("Incomes", income);
+
+      if(recordEntry.statusResponse) {
+        setLoading(false);
+        Alert.alert("Nuevo Ingreso", "Datos guardados correctamente.", 
+          [{ style: "cancel", text: "Aceptar", onPress: () => navigation.navigate("income") }]);
+      } else {
+        setLoading(false);
+        Alert.alert("Error", "No se pudo guardar los datos", 
+          [{ style: "cancel", text: "Aceptar" }]);
+      }
+    }
+  };
+
   return (
-    <View style = { styles.container }>
-      <TouchableOpacity 
-        onPressIn={showDatepicker}>
-        <Text style = { styles.txtLabel }>Fecha: </Text>
+    <View style={styles.container}>
+      <TouchableOpacity onPressIn={showDatepicker}>
+        <Text style={styles.txtLabel}>Fecha: </Text>
         <Input
           placeholder={"Fecha"}
           value={moment(date).format("DD/MM/YYYY")}
           editable={false}
-          style = { styles.input }
+          style={styles.input}
         />
       </TouchableOpacity>
       <Input 
-        placeholder="Descripcion"
-        style = { styles.input }
-        multiline = {true}
+        placeholder="Descripcion" 
+        style={styles.input} 
+        multiline={true}
+        onChangeText = {(text) => setConcepto(text)}
+        errorMessage = {errores.concepto} 
       />
-      <Input 
-        placeholder="Monto" 
+      <Input
+        placeholder="Monto"
         keyboardType="number-pad"
-        style = { styles.input } 
+        style={styles.input}
+        onChangeText = {(text) => setMonto(parseFloat(text))}
+        errorMessage = {errores.monto} 
       />
-      <Text style={ styles.txtLabel }>Categoría</Text>
-      <Botonera 
-        categoria = {categoria} setCategoria = {setCategoria}
-      />
-      <Button
-        title="Guardar Ingreso"
+      <Text style={styles.txtLabel}>Categoría</Text>
+      <Botonera categoria={categoria} setCategoria={setCategoria} />
+      <Button 
+        title="Guardar Ingreso" 
         buttonStyle={styles.btnAdd}
+        onPress = {
+          addIncome
+        } 
       />
-     
+      <Loading isVisible = {loading} text="Guardando los datos..." />
       {/* <Button
         title="Cancelar"
         buttonStyle={styles.btnCancel}
@@ -77,55 +121,54 @@ export default function NewIncome() {
         />
       )}
     </View>
-    
   );
 }
 
 function Botonera(props) {
   const { categoria, setCategoria } = props;
   return (
-    <View style = { styles.botonera }>
-      <TouchableOpacity 
-        style = { styles.btnCategoria }
-        onPress = {() => {
-          setCategoria("generales")
+    <View style={styles.botonera}>
+      <TouchableOpacity
+        style={styles.btnCategoria}
+        onPress={() => {
+          setCategoria("generales");
         }}
       >
-        <Icon 
-          type = "material-community"
-          name = "currency-usd"
-          size = {24}
-          color = {categoria === "generales" ? "#0093c4" : "#aeaeae"}
+        <Icon
+          type="material-community"
+          name="currency-usd"
+          size={24}
+          color={categoria === "generales" ? "#0093c4" : "#aeaeae"}
           reverse
         />
         <Text>Generales</Text>
       </TouchableOpacity>
-      <TouchableOpacity 
-        style = { styles.btnCategoria }
-        onPress = {() => {
-          setCategoria("fijos")
+      <TouchableOpacity
+        style={styles.btnCategoria}
+        onPress={() => {
+          setCategoria("fijos");
         }}
       >
-        <Icon 
-          type = "material-community"
-          name = "pin"
-          size = {24}
-          color = {categoria === "fijos" ? "#0093c4" : "#aeaeae"}
+        <Icon
+          type="material-community"
+          name="pin"
+          size={24}
+          color={categoria === "fijos" ? "#0093c4" : "#aeaeae"}
           reverse
         />
         <Text>Fijos</Text>
       </TouchableOpacity>
-      <TouchableOpacity 
-        style = { styles.btnCategoria }
-        onPress = {() => {
-          setCategoria("extra")
+      <TouchableOpacity
+        style={styles.btnCategoria}
+        onPress={() => {
+          setCategoria("extra");
         }}
       >
-        <Icon 
-          type = "material-community"
-          name = "wallet-giftcard"
-          size = {24}
-          color = {categoria === "extra" ? "#0093c4" : "#aeaeae"}
+        <Icon
+          type="material-community"
+          name="wallet-giftcard"
+          size={24}
+          color={categoria === "extra" ? "#0093c4" : "#aeaeae"}
           reverse
         />
         <Text>Extraordinarios</Text>
@@ -162,23 +205,23 @@ const styles = StyleSheet.create({
   btnCancel: {
     marginBottom: 20,
     marginHorizontal: 20,
-    backgroundColor: "#aeaeae"
+    backgroundColor: "#aeaeae",
   },
   txtLabel: {
     fontSize: 18,
     fontFamily: "Roboto",
     marginLeft: 10,
     marginTop: 20,
-    color: "#8d8d8d"
+    color: "#8d8d8d",
   },
   botonera: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around",
-    marginVertical: 10
+    marginVertical: 10,
   },
   btnCategoria: {
     justifyContent: "center",
-    alignItems: "center"
-  }
+    alignItems: "center",
+  },
 });
