@@ -17,20 +17,21 @@ import moment from "moment/min/moment-with-locales";
 import { useWindowDimensions } from "react-native";
 import { findAllIncomes } from "../../Services/FirebaseService";
 
+import Loading from "../../Components/Loading";
+
 export default function Incomes() {
 
   moment.locale("es");
   const navigation = useNavigation();
 
   const [incomes, setIncomes] = useState({});
+  const [loading, setLoading] = useState(false);
 
-      async () => setIncomes(await findAllIncomes());
-  console.log(
-    incomes
-  );
-  /* useEffect(() => {
+  useEffect(() => {
     (async () => {
+      setLoading(true);
       setIncomes(await findAllIncomes());
+      setLoading(false);
     })();
   }, []);
 
@@ -38,10 +39,13 @@ export default function Incomes() {
   useFocusEffect(
     useCallback(() => {
       (async () => {
+    //    setLoading(true);
         setIncomes(await findAllIncomes());
+    //    setLoading(false);
+      totalIncomes();
       })();
     }, [])
-  ); */
+  );
 
   /* const incomes = [
     {
@@ -102,11 +106,19 @@ export default function Incomes() {
     },
   ]; */
 
-  
+  const totalIncomes = () => {
+    let total = 0.0;
+    for(i = 0; i < incomes.length; i++) {
+      total += parseFloat(incomes[i].monto);
+    }
+    console.log(total);
+    return total;
+  };
 
   return (
     <View style = {{ flex: 1, justifyContent: "center" }}>
-      <StatusBar backgroundColor="#4f9a94" />
+      <Text style = {styles.totalText}>Total: ${totalIncomes().toFixed(2)}</Text>
+      {incomes.length > 0 ? (
       <FlatList
         data={incomes}
         contentContainerStyle={{ paddingBottom: 80 }}
@@ -122,7 +134,9 @@ export default function Incomes() {
             }}>
               <View style={ styles.calendarCell }>
                 <Text style = { styles.calendarText }>
-                  {"  " + item.date}
+                  {
+                    "  " + moment(item.date.toDate()).format("dd DD MMM YY")
+                  }
                 </Text>
               </View>
               <View style={{ flex: 0.6 }}>
@@ -142,6 +156,45 @@ export default function Incomes() {
           </TouchableHighlight>
         )}
       />
+      ) : (
+        <View style = {styles.noData}>
+          <Text style = {{
+            fontSize: 18,
+            textAlign: "center"
+          }}>
+            Parece que no hay ingresos guardados aún...o revise su conexión a internet.
+          </Text>
+          <View style = {{
+            flex: 1,
+            flexDirection: "row",
+            alignSelf: "center"
+          }}>
+          <Icon 
+            name = "question"
+            type = "material-community"
+            color = "#CCC"
+            reverse
+            containerStyle = {{ marginTop: 20 }}
+          />
+          <Icon 
+            name = "cloud-question"
+            type = "material-community"
+            color = "#CCC"
+            reverse
+            containerStyle = {{ marginTop: 20 }}
+          />
+          <Icon 
+            name = "wifi-off"
+            type = "material-community"
+            color = "#CCC"
+            reverse
+            containerStyle = {{ marginTop: 20 }}
+          />
+
+          </View>
+        </View>
+      )}
+      {/* <Text>{ totalIncomes }</Text> */}
       <Icon 
         name = "plus"
         type = "material-community"
@@ -152,8 +205,8 @@ export default function Incomes() {
         }
         reverse
       />
+      <Loading isVisible = {loading} text = "Actualizando datos..." />
     </View>
-    
   );
 }
 
@@ -259,5 +312,25 @@ const styles = StyleSheet.create({
     shadowColor: "#000000",
     shadowOffset: { width: 2, height: 2 },
     shadowOpacity: 0.2
+  },
+  noData: {
+    marginHorizontal: 20
+  },
+  totalText: {
+    paddingVertical: 10, 
+    marginEnd: 10,
+    textAlign:"right",
+    borderBottomWidth: 0.5,
+    borderBottomColor: "#cfcfcf",
+    fontFamily: "Roboto",
+    fontSize: 16,
+    fontStyle: "italic",
+    fontWeight: "bold",
+    color: "#00766c"
+    /* borderRadius: 5,
+    shadowColor: "#cfcfcf",
+    shadowRadius: 5,
+    shadowOffset: { height: 10, width: 10 },
+    shadowOpacity: 0.3, */
   }
 });

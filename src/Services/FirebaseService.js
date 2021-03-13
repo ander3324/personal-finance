@@ -115,6 +115,7 @@ export const validarSesion = (setUserAuth) => {
     await db.collection("Incomes")
     .where("usuario", "==", obtenerUsuario().uid)
     .where("status", "==", 1)
+    .orderBy("date", "desc")
     .get()
     .then((response) => {
       response.forEach((doc) => {
@@ -126,6 +127,6 @@ export const validarSesion = (setUserAuth) => {
     .catch((err) => {
       console.log(err);
     });
-    console.log(incomes);
+    //console.log(incomes);
     return incomes;
   }
