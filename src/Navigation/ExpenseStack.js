@@ -2,7 +2,7 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import Expense from '../Views/Expenses/Expense';
-
+import AddExpense from "../Views/Expenses/AddExpense";
 const Stack = createStackNavigator();
 
 export default function ExpenseStack() {
@@ -21,6 +21,11 @@ export default function ExpenseStack() {
             fontWeight: "bold"
           }
         }}
+      />
+      <Stack.Screen
+        component = { AddExpense }
+        name = "add-expense"
+        options = {{ title: "Nuevo Gasto" }}
       />
     </ Stack.Navigator>
   );
