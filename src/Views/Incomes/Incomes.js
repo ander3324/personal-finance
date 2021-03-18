@@ -127,7 +127,7 @@ export default function Incomes() {
             style={styles.card}
             key={item.key}
             onPress={() => Alert.alert(item.concepto)}
-            underlayColor="#0093c4"
+            underlayColor="#e0e0e0"
           >
             <View style={{ 
               flexDirection: "row" 
@@ -252,7 +252,8 @@ const styles = StyleSheet.create({
     borderBottomColor: "#cfcfcf",
     borderBottomWidth: 0.2,
     paddingTop: 10,
-    paddingBottom: 10
+    paddingBottom: 10,
+    paddingRight: 5
   },
   vline: {
     height: 100,

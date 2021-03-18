@@ -130,3 +130,25 @@ export const validarSesion = (setUserAuth) => {
     //console.log(incomes);
     return incomes;
   }
+  
+  export const findAll = async (collection) => {
+    console.log(`Colección: ${collection}`);
+    let data = [];
+    await db.collection(collection)
+    .where("usuario", "==", obtenerUsuario().uid)
+    .where("status", "==", 1)
+    .orderBy("date", "desc")
+    .get()
+    .then((response) => {
+      response.forEach((doc) => {
+        let obj = doc.data();
+        obj.id = doc.id;
+        data.push(obj);
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+    //console.log(incomes);
+    return data;
+  }

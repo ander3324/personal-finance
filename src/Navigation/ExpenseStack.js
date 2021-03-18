@@ -13,7 +13,7 @@ export default function ExpenseStack() {
         name="expense"
         options={{
           headerStyle: {
-            backgroundColor: "#af4448"
+            backgroundColor: "#4ba3c7"
           },
           headerTintColor: "#fff",
           headerTitle: "Mis Gastos",
