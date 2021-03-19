@@ -15,9 +15,9 @@ import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { size } from "lodash";
 import moment from "moment/min/moment-with-locales";
 import { useWindowDimensions } from "react-native";
-import { findAllIncomes } from "../../Services/FirebaseService";
 
 import Loading from "../../Components/Loading";
+import { findAll } from "../../Services/FirebaseService";
 
 export default function Incomes() {
 
@@ -30,7 +30,7 @@ export default function Incomes() {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      setIncomes(await findAllIncomes());
+      setIncomes(await findAll("Operations", "income"));
       setLoading(false);
     })();
   }, []);
@@ -40,71 +40,12 @@ export default function Incomes() {
     useCallback(() => {
       (async () => {
     //    setLoading(true);
-        setIncomes(await findAllIncomes());
+        setIncomes(await findAll("Operations", "income"));
     //    setLoading(false);
-      totalIncomes();
+        totalIncomes();
       })();
     }, [])
   );
-
-  /* const incomes = [
-    {
-      key: 1,
-      fecha: moment(new Date()).format("dd DD MMM YY"),
-      concepto: "Sueldo Mensual",
-      monto: 120000,
-      categoria: "Sueldos",
-    },
-    {
-      key: 2,
-      fecha: moment(new Date()).format("dd DD MMM YY"),
-      concepto: "Aguinaldo",
-      monto: 60000,
-      categoria: "Sueldos",
-    },
-    {
-      key: 3,
-      fecha: moment(new Date()).format("dd DD MMM YY"),
-      concepto: "Cobro App",
-      monto: 360000,
-      categoria: "Sueldos",
-    },
-    {
-      key: 4,
-      fecha: moment(new Date()).format("dd DD MMM YY"),
-      concepto: "Ingreso Alquiler",
-      monto: 120000,
-      categoria: "Sueldos",
-    },
-    {
-      key: 5,
-      fecha: moment(new Date()).format("dd DD MMM YY"),
-      concepto: "Sueldo Mensual",
-      monto: 120000,
-      categoria: "Sueldos",
-    },
-    {
-      key: 6,
-      fecha: moment(new Date()).format("dd DD MMM YY"),
-      concepto: "Aguinaldo",
-      monto: 60000,
-      categoria: "Sueldos",
-    },
-    {
-      key: 7,
-      fecha: moment(new Date()).format("dd DD MMM YY"),
-      concepto: "Cobro App",
-      monto: 360000,
-      categoria: "Sueldos",
-    },
-    {
-      key: 8,
-      fecha: moment(new Date()).format("dd DD MMM YY"),
-      concepto: "Ingreso Alquiler",
-      monto: 120000,
-      categoria: "Sueldos",
-    },
-  ]; */
 
   const totalIncomes = () => {
     let total = 0.0;
@@ -117,7 +58,10 @@ export default function Incomes() {
 
   return (
     <View style = {{ flex: 1, justifyContent: "center" }}>
-      <Text style = {styles.totalText}>Total: ${totalIncomes().toFixed(2)}</Text>
+      {
+        incomes.length > 0 ?
+          <Text style = {styles.totalText}>Total: ${totalIncomes().toFixed(2)}</Text> : <></>
+      }
       {incomes.length > 0 ? (
       <FlatList
         data={incomes}

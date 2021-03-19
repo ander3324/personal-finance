@@ -53,11 +53,12 @@ export default function NewIncome() {
         concepto,
         monto,
         categoria,
+        tipo: "income",
         usuario: obtenerUsuario().uid,
         status: 1
       };
 
-      const recordEntry = await addRegistro("Incomes", income);
+      const recordEntry = await addRegistro("Operations", income);
 
       if(recordEntry.statusResponse) {
         setLoading(false);
@@ -83,7 +84,7 @@ export default function NewIncome() {
         />
       </TouchableOpacity>
       <Input 
-        placeholder="Descripcion" 
+        placeholder="Descripción" 
         style={styles.input} 
         multiline={true}
         onChangeText = {(text) => setConcepto(text)}
@@ -141,7 +142,7 @@ function Botonera(props) {
           color={categoria === "generales" ? "#0093c4" : "#aeaeae"}
           reverse
         />
-        <Text>Generales</Text>
+        <Text>General</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.btnCategoria}

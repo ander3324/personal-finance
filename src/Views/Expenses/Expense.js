@@ -22,7 +22,7 @@ export default function Expense() {
     (
       async () => {
         setLoading(true);
-        setExpenses(await findAll("Expenses"));
+        setExpenses(await findAll("Operations", "expense"));
         setLoading(false);
       }
     )();
@@ -33,7 +33,7 @@ export default function Expense() {
       () => {
         (
           async () => {
-            setExpenses(await findAll("Expenses"));
+            setExpenses(await findAll("Operations", "expense"));
             totalExpenses();
           }
         )();
@@ -51,11 +51,10 @@ export default function Expense() {
   };
 
   return (
-    <View style = { {flex: 1, justifyContent: "center"} }>
+    <View style = {{ flex: 1, justifyContent: "center" }}>
       {/* <StatusBar backgroundColor = "#af4448" /> */}
+      { expenses.length > 0 ? <Text style = { styles.totalText }>Total: ${totalExpenses().toFixed(2)}</Text> : <></>}
       {expenses.length > 0 ? (
-        <View>
-          <Text style = { styles.totalText }>Total: ${totalExpenses().toFixed(2)}</Text>
           <FlatList 
             data = { expenses }
             contentContainerStyle = {{ paddingBottom: 120 }}
@@ -91,7 +90,6 @@ export default function Expense() {
               </TouchableHighlight>
             )}
           />
-        </View>
       ) : (
         <View style = {styles.noData}>
           <Text style = {{
@@ -244,7 +242,7 @@ const styles = StyleSheet.create({
   },
   totalText: {
     paddingVertical: 10,
-    marginTop: 40, 
+    marginTop: 0, 
     paddingEnd: 10,
     textAlign:"right",
     borderBottomWidth: 0.5,

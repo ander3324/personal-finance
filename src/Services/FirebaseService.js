@@ -109,34 +109,14 @@ export const validarSesion = (setUserAuth) => {
     });
     return resultado;
   }
-
-  export const findAllIncomes = async () => {
-    let incomes = [];
-    await db.collection("Incomes")
-    .where("usuario", "==", obtenerUsuario().uid)
-    .where("status", "==", 1)
-    .orderBy("date", "desc")
-    .get()
-    .then((response) => {
-      response.forEach((doc) => {
-        let income = doc.data();
-        income.id = doc.id;
-        incomes.push(income);
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-    //console.log(incomes);
-    return incomes;
-  }
   
-  export const findAll = async (collection) => {
+  export const findAll = async (collection, type) => {
     console.log(`Colección: ${collection}`);
     let data = [];
     await db.collection(collection)
     .where("usuario", "==", obtenerUsuario().uid)
     .where("status", "==", 1)
+    .where("tipo", "==", type)
     .orderBy("date", "desc")
     .get()
     .then((response) => {
