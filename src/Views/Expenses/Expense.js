@@ -5,6 +5,7 @@ import { useNavigation, useFocusEffect } from "@react-navigation/native";
 
 import { size } from "lodash";
 import moment from "moment/min/moment-with-locales";
+import ContextMenu from "react-native-context-menu-view";
 
 import Loading from "../../Components/Loading";
 import { findAll } from '../../Services/FirebaseService';

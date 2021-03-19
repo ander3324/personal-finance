@@ -17,7 +17,8 @@ import moment from "moment/min/moment-with-locales";
 import { useWindowDimensions } from "react-native";
 
 import Loading from "../../Components/Loading";
-import { findAll } from "../../Services/FirebaseService";
+import { deleteRegistro, findAll } from "../../Services/FirebaseService";
+import ContextMenu from "react-native-context-menu-view";
 
 export default function Incomes() {
 
@@ -70,7 +71,42 @@ export default function Incomes() {
           <TouchableHighlight
             style={styles.card}
             key={item.key}
-            onPress={() => Alert.alert(item.concepto)}
+            onLongPress = {
+              () => Alert.alert(moment(item.date.toDate()).format("dd DD MMM YY"), item.concepto, [
+                {
+                  text: "Editar",
+                  style: "default",
+                  onPress: () => console.log("Editar")
+                },
+                {
+                  text: "Borrar",
+                  style: "destructive",
+                  onPress: () => {
+                    Alert.alert("¡Atención!", 
+                    `Vas a borrar el registro "${item.concepto}", del día ${moment(item.date.toDate()).format("YY/MM/YYYY")}, ¿Deseas continuar?`,
+                    [
+                      {
+                        style: "destructive",
+                        text: "Sí",
+                        onPress: async () => {
+                          await deleteRegistro("Operations", item.id);
+                          setIncomes(await findAll("Operations", "income"));
+                          Alert.alert("Borrar", "Registro borrado.");
+                        }
+                      },
+                      {
+                        style: "cancel",
+                        text: "No"
+                      }
+                    ]);
+                  }
+                },
+                {
+                  text: "Cancelar",
+                  style: "cancel"
+                },
+              ])
+            }
             underlayColor="#e0e0e0"
           >
             <View style={{ 

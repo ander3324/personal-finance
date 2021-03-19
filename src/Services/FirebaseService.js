@@ -109,6 +109,26 @@ export const validarSesion = (setUserAuth) => {
     });
     return resultado;
   }
+
+  export const updateRegistro = async (coleccion, documento, datos) => {
+    let response = { statusResponse: false };
+
+    await db.collection(coleccion).doc(documento).update(datos)
+      .then((result) => (response.statusResponse = true))
+      .catch((err) => console.log(err));
+    
+      return response;
+  }
+
+  export const deleteRegistro = async (coleccion, documento) => {
+    let response = { statusResponse : false };
+
+    await db.collection(coleccion).doc(documento).delete()
+      .then((result) => (response.statusResponse = true))
+      .catch((err) => console.log(err));
+
+    return response;
+  }
   
   export const findAll = async (collection, type) => {
     console.log(`Colección: ${collection}`);

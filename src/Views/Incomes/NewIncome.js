@@ -4,6 +4,7 @@ import { Input, Button, Icon } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 
 //import DatePicker from "react-native-date-picker";
+//@react-native-community/datetimepicker@3.4.0
 import DateTimePicker from "@react-native-community/datetimepicker";
 import moment from "moment/min/moment-with-locales";
 
