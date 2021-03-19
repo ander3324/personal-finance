@@ -69,7 +69,7 @@ export default function Expense() {
                   <View style = { styles.calendarCell }>
                     <Text style = { styles.calendarText }>
                       {
-                        `  ${moment(item.fecha).format("dd DD MMM YY")}`
+                        `  ${moment(item.date.toDate()).format("dd DD MMM YY")}`
                       }
                     </Text>
                   </View>
