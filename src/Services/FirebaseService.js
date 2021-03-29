@@ -152,3 +152,23 @@ export const validarSesion = (setUserAuth) => {
     //console.log(incomes);
     return data;
   }
+
+  export const findById = async (coleccion, documento) => {
+    let response = { statusResponse: false, data: null };
+
+    await db.
+    collection(coleccion)
+    .doc(documento)
+    .get()
+    .then((result) => {
+      const operation = result.data();
+      operation.id = result.id;
+      response.data = operation;
+      response.statusResponse = true;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+    return response;
+  }

@@ -9,13 +9,21 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import moment from "moment/min/moment-with-locales";
 
 import Loading from "../../Components/Loading";
-import { addRegistro, findById, obtenerUsuario } from "../../Services/FirebaseService";
+import {
+  addRegistro,
+  findById,
+  obtenerUsuario,
+  updateRegistro,
+} from "../../Services/FirebaseService";
 import { Keyboard } from "react-native";
 import { TouchableWithoutFeedback } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { isEmpty } from "lodash";
 
-export default function NewIncome() {
+export default function EditIncome(props) {
+
+  const { route } = props;
+  const { item } = route.params;
 
   const navigation = useNavigation();
 
@@ -26,6 +34,18 @@ export default function NewIncome() {
   const [showDateDialog, setShowDateDialog] = useState(false);
   const [errores, setErrores] = useState({});
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+      (async () => {
+          const response = await findById("Operations", item.id);
+          console.log(response);
+          const { data } = response;
+          setConcepto(data.concepto);
+          setMonto(data.monto);
+          setCategoria(data.categoria);
+          setDate(data.date.toDate());
+      })();
+  }, []);
 
   const showDatepicker = () => {
     setShowDateDialog(true);
@@ -38,41 +58,53 @@ export default function NewIncome() {
     setDate(currentDate);
   };
 
-  const addIncome = async () => {
+  const editIncome = async () => {
     setErrores({});
-    if(isEmpty(concepto)) {
-      setErrores({concepto: "Ingrese una descripción."});
+    if (isEmpty(concepto)) {
+      setErrores({ concepto: "Ingrese una descripción." });
     } else if (!parseFloat(monto) > 0) {
-      setErrores({monto: "Ingrese el monto."});
+      setErrores({ monto: "Ingrese el monto." });
     } else if (isEmpty(categoria)) {
-      Alert.alert("Error", "Seleccione la categoría.", [{style: "cancel", text: "Ok"}]);
+      Alert.alert("Error", "Seleccione la categoría.", [
+        { style: "cancel", text: "Ok" },
+      ]);
     } else {
       setLoading(true);
-      
+
       //Crear ingreso:
       const income = {
         date,
         concepto,
-        monto,
+        monto: Number(monto),
         categoria,
         tipo: "income",
         usuario: obtenerUsuario().uid,
-        status: 1
+        status: 1,
       };
 
-      const recordEntry = await addRegistro("Operations", income);
+      const recordEntry = await updateRegistro ("Operations", item.id, income);
 
-      if(recordEntry.statusResponse) {
+      if (recordEntry.statusResponse) {
         setLoading(false);
-        Alert.alert("Nuevo Ingreso", "Datos guardados correctamente.", 
-          [{ style: "cancel", text: "Aceptar", onPress: () => navigation.navigate("income") }]);
+        Alert.alert("Editar Ingreso", "Datos guardados correctamente.", [
+          {
+            style: "cancel",
+            text: "Aceptar",
+            onPress: () => navigation.navigate("income"),
+          },
+        ]);
       } else {
         setLoading(false);
-        Alert.alert("Error", "No se pudo guardar los datos", 
-          [{ style: "cancel", text: "Aceptar" }]);
+        Alert.alert("Error", "No se pudo guardar los datos", [
+          { style: "cancel", text: "Aceptar" },
+        ]);
       }
     }
   };
+
+  const floatToTextValue = (value) => {
+    return value ? String(value) : "";
+  }
 
   return (
     <View style={styles.container}>
@@ -85,30 +117,30 @@ export default function NewIncome() {
           style={styles.input}
         />
       </TouchableOpacity>
-      <Input 
-        placeholder="Descripción" 
-        style={styles.input} 
+      <Input
+        placeholder="Descripción"
+        style={styles.input}
         multiline={true}
-        onChangeText = {(text) => setConcepto(text)}
-        errorMessage = {errores.concepto} 
+        onChangeText={(text) => setConcepto(text)}
+        errorMessage={errores.concepto}
+        value = { concepto }
       />
       <Input
         placeholder="Monto"
         keyboardType="number-pad"
         style={styles.input}
-        onChangeText = {(text) => setMonto(parseFloat(text))}
-        errorMessage = {errores.monto} 
+        onChangeText={ (text) => setMonto(text) }
+        errorMessage={errores.monto}
+        value = { monto.toString() }
       />
       <Text style={styles.txtLabel}>Categoría</Text>
       <Botonera categoria={categoria} setCategoria={setCategoria} />
-      <Button 
-        title="Guardar Ingreso" 
+      <Button
+        title="Editar Ingreso"
         buttonStyle={styles.btnAdd}
-        onPress = {
-          addIncome
-        } 
+        onPress={editIncome}
       />
-      <Loading isVisible = {loading} text="Guardando los datos..." />
+      <Loading isVisible={loading} text="Guardando los datos..." />
       {/* <Button
         title="Cancelar"
         buttonStyle={styles.btnCancel}

@@ -3,6 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import Income from '../Views/Incomes/Incomes';
 import NewIncome from "../Views/Incomes/NewIncome";
+import EditIncome from "../Views/Incomes/EditIncome";
 
 const Stack = createStackNavigator();
 
@@ -28,6 +29,11 @@ export default function IncomeStack() {
         component = {NewIncome}
         name = "add-income"
         options = {{ title: "Nuevo Ingreso" }}
+      />
+      <Stack.Screen 
+        component = { EditIncome }
+        name = "edit-income"
+        options = {{ title: "Editar ingreso" }}
       />
     </Stack.Navigator>
   );

@@ -17,7 +17,7 @@ import moment from "moment/min/moment-with-locales";
 import { useWindowDimensions } from "react-native";
 
 import Loading from "../../Components/Loading";
-import { deleteRegistro, findAll } from "../../Services/FirebaseService";
+import { deleteRegistro, findAll, updateRegistro } from "../../Services/FirebaseService";
 import ContextMenu from "react-native-context-menu-view";
 
 export default function Incomes() {
@@ -76,7 +76,10 @@ export default function Incomes() {
                 {
                   text: "Editar",
                   style: "default",
-                  onPress: () => console.log("Editar")
+                  onPress: () => {
+                    console.log("Editar");
+                    navigation.navigate("edit-income",   { item: item  }  );
+                  }
                 },
                 {
                   text: "Borrar",
