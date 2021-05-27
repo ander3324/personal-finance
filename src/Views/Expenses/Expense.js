@@ -8,7 +8,7 @@ import moment from "moment/min/moment-with-locales";
 import ContextMenu from "react-native-context-menu-view";
 
 import Loading from "../../Components/Loading";
-import { findAll } from '../../Services/FirebaseService';
+import { deleteRegistro, findAll } from '../../Services/FirebaseService';
 
 export default function Expense() {
 
@@ -63,7 +63,46 @@ export default function Expense() {
               <TouchableHighlight 
                 style = { styles.card }
                 key = { item.key }
-                onPress = { () => Alert.alert(item.concepto) }
+                //onPress = { () => Alert.alert(item.concepto) }
+                onLongPress = {
+                  () => Alert.alert(moment(item.date.toDate()).format("dd DD MMM YY"), item.concepto, 
+                  [
+                    {
+                      text: "Editar",
+                      style: "default",
+                      onPress: () => {
+                        console.log(`Editar ${item.concepto}`);
+                        navigation.navigate("edit-expense", { item: item });
+                      }
+                    },
+                    {
+                      text: "Borrar",
+                      style: 'destructive',
+                      onPress: () => {
+                        Alert.alert("¡Atención!", 
+                        `Vas a borrar el registro "${item.concepto}", del día ${moment(item.date.toDate()).format("YY/MM/YYYY")}. ¿Desea continuar?`, [
+                          {
+                            style: "destructive",
+                            text: "Sí",
+                            onPress: async () => {
+                              await deleteRegistro("Operations", item.id);
+                              setExpenses(await findAll("Operations", "expense"));
+                              Alert.alert("Borrar", "Registro borrado.");
+                            }
+                          },
+                          {
+                            style: 'cancel',
+                            text: "No"
+                          }
+                        ]);
+                      }
+                    },
+                    {
+                      text: "Cancelar",
+                      style: "cancel"
+                    }
+                  ])
+                }
                 underlayColor = "#e0e0e0"
               >
                 <View style = {{ flexDirection: "row" }}>
