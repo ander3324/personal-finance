@@ -1,14 +1,67 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View, Alert } from 'react-native';
+import { Input, Button, Icon } from "react-native-elements";
+import { useNavigation } from "@react-navigation/native";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import DateTimePicker from "@react-native-community/datetimepicker";
+
+import moment from "moment/min/moment-with-locales";
+import { isEmpty } from "lodash";
+
+import Loading from "../../Components/Loading";
+import { findById, obtenerUsuario, updateRegistro } from "../../Services/FirebaseService";
 
 export default function EditExpense(props) {
 
     const { route } = props;
     const { item } = route.params;
 
+    const navigation = useNavigation();
+
+    const [date, setDate] = useState(new Date());
+    const [showDateDialog, setShowDateDialog] = useState(false);
+
+    useEffect(() => {
+        (async () => {
+            
+            const response = await findById("Operations", item.id);
+            console.log(response);
+            
+            const { data } = response;
+            setDate(data.date.toDate());
+        })();
+    }, []);
+
+    const showDatepicker = () => {
+        setShowDateDialog(true);
+    }
+
+    const onChangeDate = (event, selectedDate) => {
+        setShowDateDialog(false);
+        const currentDate = selectedDate || date;
+        setDate(currentDate);
+    }
+
     return (
-        <View>
-            <Text></Text>
+        <View style = { styles.container }>
+            <TouchableOpacity onPressIn = { showDatepicker }>
+                <Text style = { styles.txtLabel }>Fecha: </Text>
+                <Input 
+                    placeholder = { "Fecha" }
+                    value = { moment(date).format("DD/MM/YYYY") }
+                    editable = { false }
+                    style = { styles.input }
+                />
+            </TouchableOpacity>
+            { showDateDialog && (
+                <DateTimePicker 
+                    testID = "dateTimePicker"
+                    value = { date }
+                    mode = { "date" }
+                    display = { 'default' }
+                    onChange = { onChangeDate }
+                />
+            ) }
         </View>
     )
 }
