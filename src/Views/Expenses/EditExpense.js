@@ -20,6 +20,9 @@ export default function EditExpense(props) {
 
     const [date, setDate] = useState(new Date());
     const [showDateDialog, setShowDateDialog] = useState(false);
+    const [concepto, setConcepto] = useState("");
+    const [monto, setMonto] = useState(0.0)
+    const [errores, setErrores] = useState({});
 
     useEffect(() => {
         (async () => {
@@ -28,7 +31,11 @@ export default function EditExpense(props) {
             console.log(response);
             
             const { data } = response;
+
             setDate(data.date.toDate());
+            setConcepto(data.concepto);
+            setMonto(data.monto);
+
         })();
     }, []);
 
@@ -53,6 +60,26 @@ export default function EditExpense(props) {
                     style = { styles.input }
                 />
             </TouchableOpacity>
+            <Input 
+              placeholder = "Descripción"
+              style = { styles.input }
+              multiline = { true }
+              onChangeText = { (text) => setConcepto(text) }
+              errorMessage = { errores.concepto }
+              value = { concepto }
+            />
+            <Input 
+              placeholder = { "Monto" }
+              keyboardType = { "number-pad" }
+              style = { styles.input }
+              onChangeText = { (text) => setMonto(text) }
+              errorMessage = { errores.monto }
+              value = { 
+                monto.toString().includes(".") 
+                ? monto.toString() 
+                : monto.toString().concat(".00")
+              }
+            />
             { showDateDialog && (
                 <DateTimePicker 
                     testID = "dateTimePicker"

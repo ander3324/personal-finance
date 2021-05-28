@@ -131,7 +131,11 @@ export default function EditIncome(props) {
         style={styles.input}
         onChangeText={ (text) => setMonto(text) }
         errorMessage={errores.monto}
-        value = { monto.toString() }
+        value = { 
+          monto.toString().includes(".") 
+          ? monto.toString() 
+          : monto.toString().concat(".00")
+        }
       />
       <Text style={styles.txtLabel}>Categoría</Text>
       <Botonera categoria={categoria} setCategoria={setCategoria} />
