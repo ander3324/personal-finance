@@ -57,8 +57,11 @@ export default function AddExpense() {
 
             if(recordData.statusResponse) {
                 setLoading(false);
+                // Alert.alert("Nuevo Gasto", "Datos guardados correctamente.", [
+                //     { style: "cancel", text: "Aceptar", onPress: () => navigation.navigate("expense") }
+                // ]);
                 Alert.alert("Nuevo Gasto", "Datos guardados correctamente.", [
-                    { style: "cancel", text: "Aceptar", onPress: () => navigation.navigate("expense") }
+                    { style: "cancel", text: "Aceptar", onPress: () => navigation.goBack() }
                 ]);
             } else {
                 setLoading(false);

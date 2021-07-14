@@ -65,7 +65,7 @@ export default function NewIncome() {
       if(recordEntry.statusResponse) {
         setLoading(false);
         Alert.alert("Nuevo Ingreso", "Datos guardados correctamente.", 
-          [{ style: "cancel", text: "Aceptar", onPress: () => navigation.navigate("income") }]);
+          [{ style: "cancel", text: "Aceptar", onPress: () => navigation.goBack() }]);
       } else {
         setLoading(false);
         Alert.alert("Error", "No se pudo guardar los datos", 
