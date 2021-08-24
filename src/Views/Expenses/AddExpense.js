@@ -218,6 +218,7 @@ export default function AddExpense() {
 
     return (
         <View style = { styles.container }>
+
             <TouchableOpacity onPressIn = { showDatepicker }>
                 <Text style = { styles.txtLabel }>Fecha: </Text>
                 <Input 

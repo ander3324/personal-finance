@@ -1,71 +1,82 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StatusBar, FlatList, StyleSheet, TouchableHighlight, Alert } from 'react-native';
+import React, { useState, useEffect, useCallback } from "react";
+import {
+  View,
+  Text,
+  StatusBar,
+  FlatList,
+  StyleSheet,
+  TouchableHighlight,
+  Alert,
+} from "react-native";
 import { Icon } from "react-native-elements";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import RNPickerSelect from "react-native-picker-select";
 
 import { size } from "lodash";
 import moment from "moment/min/moment-with-locales";
 import ContextMenu from "react-native-context-menu-view";
 
 import Loading from "../../Components/Loading";
-import { deleteRegistro, findAll } from '../../Services/FirebaseService';
+import { deleteRegistro, findAll } from "../../Services/FirebaseService";
+import { PeriodDropdown } from "../../Components/PeriodDropdown";
 
 export default function Expense() {
-
   moment.locale("es");
-  
+
   const navigation = useNavigation();
 
   const [expenses, setExpenses] = useState({});
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    (
-      async () => {
-        setLoading(true);
-        setExpenses(await findAll("Operations", "expense"));
-        setLoading(false);
-      }
-    )();
+    (async () => {
+      setLoading(true);
+      setExpenses(await findAll("Operations", "expense"));
+      setLoading(false);
+    })();
   }, []);
 
   useFocusEffect(
-    useCallback(
-      () => {
-        (
-          async () => {
-            setExpenses(await findAll("Operations", "expense"));
-            totalExpenses();
-          }
-        )();
-      },
-      []
-    )
+    useCallback(() => {
+      (async () => {
+        setExpenses(await findAll("Operations", "expense"));
+        totalExpenses();
+      })();
+    }, [])
   );
-  
+
   const totalExpenses = () => {
     let total = 0.0;
-    for(let i = 0; i < expenses.length; i++) {
+    for (let i = 0; i < expenses.length; i++) {
       total += parseFloat(expenses[i].monto);
     }
     return total;
   };
 
   return (
-    <View style = {{ flex: 1, justifyContent: "center" }}>
+    <View style={{ flex: 1, justifyContent: "center" }}>
       {/* <StatusBar backgroundColor = "#af4448" /> */}
-      { expenses.length > 0 ? <Text style = { styles.totalText }>Total: ${totalExpenses().toFixed(2)}</Text> : <></>}
       {expenses.length > 0 ? (
-          <FlatList 
-            data = { expenses }
-            contentContainerStyle = {{ paddingBottom: 120 }}
-            renderItem = {({item, index, renderSeparator}) => (
-              <TouchableHighlight 
-                style = { styles.card }
-                key = { item.key }
-                //onPress = { () => Alert.alert(item.concepto) }
-                onLongPress = {
-                  () => Alert.alert(moment(item.date.toDate()).format("dd DD MMM YY"), item.concepto, 
+        <Text style={styles.totalText}>
+          Total: ${totalExpenses().toFixed(2)}
+        </Text>
+      ) : (
+        <></>
+      )}
+      {<PeriodDropdown />}
+      {expenses.length > 0 ? (
+        <FlatList
+          data={expenses}
+          contentContainerStyle={{ paddingBottom: 120 }}
+          renderItem={({ item, index, renderSeparator }) => (
+            <TouchableHighlight
+              style={styles.card}
+              key={item.key}
+              //onPress = { () => Alert.alert(item.concepto) }
+              onLongPress={() =>
+                Alert.alert(
+                  moment(item.date.toDate()).format("dd DD MMM YY"),
+                  item.concepto,
                   [
                     {
                       text: "Editar",
@@ -73,113 +84,120 @@ export default function Expense() {
                       onPress: () => {
                         console.log(`Editar ${item.concepto}`);
                         navigation.navigate("edit-expense", { item: item });
-                      }
+                      },
                     },
                     {
                       text: "Borrar",
-                      style: 'destructive',
+                      style: "destructive",
                       onPress: () => {
-                        Alert.alert("¡Atención!", 
-                        `Vas a borrar el registro "${item.concepto}", del día ${moment(item.date.toDate()).format("YY/MM/YYYY")}. ¿Desea continuar?`, [
-                          {
-                            style: "destructive",
-                            text: "Sí",
-                            onPress: async () => {
-                              await deleteRegistro("Operations", item.id);
-                              setExpenses(await findAll("Operations", "expense"));
-                              Alert.alert("Borrar", "Registro borrado.");
-                            }
-                          },
-                          {
-                            style: 'cancel',
-                            text: "No"
-                          }
-                        ]);
-                      }
+                        Alert.alert(
+                          "¡Atención!",
+                          `Vas a borrar el registro "${
+                            item.concepto
+                          }", del día ${moment(item.date.toDate()).format(
+                            "YY/MM/YYYY"
+                          )}. ¿Desea continuar?`,
+                          [
+                            {
+                              style: "destructive",
+                              text: "Sí",
+                              onPress: async () => {
+                                await deleteRegistro("Operations", item.id);
+                                setExpenses(
+                                  await findAll("Operations", "expense")
+                                );
+                                Alert.alert("Borrar", "Registro borrado.");
+                              },
+                            },
+                            {
+                              style: "cancel",
+                              text: "No",
+                            },
+                          ]
+                        );
+                      },
                     },
                     {
                       text: "Cancelar",
-                      style: "cancel"
-                    }
-                  ])
-                }
-                underlayColor = "#e0e0e0"
-              >
-                <View style = {{ flexDirection: "row" }}>
-                  <View style = { styles.calendarCell }>
-                    <Text style = { styles.calendarText }>
-                      {
-                        `  ${moment(item.date.toDate()).format("dd DD MMM YY")}`
-                      }
-                    </Text>
-                  </View>
-                  <View style = { {flex: 0.6} }>
-                    <Text style = { styles.categoryCell }>
-                      { item.categoria }
-                    </Text>
-                    <Text style = { styles.descriptionCell }>
-                      { item.concepto }
-                    </Text>
-                  </View>
-                  <View style = {{ flex: 0.4 }}>
-                    <Text style = { styles.amountCell }>
-                      ${item.monto.toFixed(2).toString()}
-                    </Text>
-                  </View>
+                      style: "cancel",
+                    },
+                  ]
+                )
+              }
+              underlayColor="#e0e0e0"
+            >
+              <View style={{ flexDirection: "row" }}>
+                <View style={styles.calendarCell}>
+                  <Text style={styles.calendarText}>
+                    {`  ${moment(item.date.toDate()).format("dd DD MMM YY")}`}
+                  </Text>
                 </View>
-              </TouchableHighlight>
-            )}
-          />
+                <View style={{ flex: 0.6 }}>
+                  <Text style={styles.categoryCell}>{item.categoria}</Text>
+                  <Text style={styles.descriptionCell}>{item.concepto}</Text>
+                </View>
+                <View style={{ flex: 0.4 }}>
+                  <Text style={styles.amountCell}>
+                    ${item.monto.toFixed(2).toString()}
+                  </Text>
+                </View>
+              </View>
+            </TouchableHighlight>
+          )}
+        />
       ) : (
-        <View style = {styles.noData}>
-          <Text style = {{
-            fontSize: 18,
-            textAlign: "center"
-          }}>
-            Parece que no hay gastos guardados aún...o revise su conexión a internet.
+        <View style={styles.noData}>
+          <Text
+            style={{
+              fontSize: 18,
+              textAlign: "center",
+            }}
+          >
+            Parece que no hay gastos guardados aún...o revise su conexión a
+            internet.
           </Text>
-          <View style = {{
-            flex: 1,
-            flexDirection: "row",
-            alignSelf: "center"
-          }}>
-          <Icon 
-            name = "question"
-            type = "material-community"
-            color = "#CCC"
-            reverse
-            containerStyle = {{ marginTop: 20 }}
-          />
-          <Icon 
-            name = "cloud-question"
-            type = "material-community"
-            color = "#CCC"
-            reverse
-            containerStyle = {{ marginTop: 20 }}
-          />
-          <Icon 
-            name = "wifi-off"
-            type = "material-community"
-            color = "#CCC"
-            reverse
-            containerStyle = {{ marginTop: 20 }}
-          />
-
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "row",
+              alignSelf: "center",
+            }}
+          >
+            <Icon
+              name="question"
+              type="material-community"
+              color="#CCC"
+              reverse
+              containerStyle={{ marginTop: 20 }}
+            />
+            <Icon
+              name="cloud-question"
+              type="material-community"
+              color="#CCC"
+              reverse
+              containerStyle={{ marginTop: 20 }}
+            />
+            <Icon
+              name="wifi-off"
+              type="material-community"
+              color="#CCC"
+              reverse
+              containerStyle={{ marginTop: 20 }}
+            />
           </View>
         </View>
       )}
-      <Icon 
-        name = "plus"
-        type = "material-community"
-        color = "#ef5350"
-        containerStyle = { styles.btnAddContainer }
-        onPress = {
-          () => { navigation.navigate("add-expense"); } 
-        }
+      <Icon
+        name="plus"
+        type="material-community"
+        color="#ef5350"
+        containerStyle={styles.btnAddContainer}
+        onPress={() => {
+          navigation.navigate("add-expense");
+        }}
         reverse
       />
-      <Loading isVisible = {loading} text = "Actualizando datos..." />
-      
+      <Loading isVisible={loading} text="Actualizando datos..." />
     </View>
   );
 }
@@ -215,14 +233,14 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.2,
     paddingTop: 10,
     paddingBottom: 10,
-    paddingRight: 5
+    paddingRight: 5,
   },
   vline: {
     height: 100,
     width: 3,
     backgroundColor: "#0093c4",
   },
-  calendarCell: { 
+  calendarCell: {
     flex: 0.2,
     marginRight: 10,
     backgroundColor: "#ef5350",
@@ -233,13 +251,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     paddingLeft: 5,
     marginLeft: 5,
-    justifyContent: "center"
+    justifyContent: "center",
   },
   calendarText: {
     fontSize: 14,
     fontWeight: "bold",
     color: "#f5f5f5",
-    marginLeft: 3
+    marginLeft: 3,
   },
   categoryCell: {
     fontSize: 12,
@@ -250,13 +268,13 @@ const styles = StyleSheet.create({
     borderBottomColor: "#616161",
     color: "#616161",
     textAlign: "right",
-    paddingHorizontal: 20 
+    paddingHorizontal: 20,
   },
   descriptionCell: {
     fontSize: 17,
     color: "#616161",
     alignSelf: "stretch",
-    marginTop: 5
+    marginTop: 5,
   },
   amountCell: {
     alignSelf: "flex-end",
@@ -266,7 +284,7 @@ const styles = StyleSheet.create({
     borderLeftWidth: 0.3,
     borderLeftColor: "#616161",
     marginVertical: 10,
-    color: "#b61827"
+    color: "#b61827",
   },
   btnAddContainer: {
     flex: 1,
@@ -275,16 +293,16 @@ const styles = StyleSheet.create({
     right: 10,
     shadowColor: "#000000",
     shadowOffset: { width: 2, height: 2 },
-    shadowOpacity: 0.2
+    shadowOpacity: 0.2,
   },
   noData: {
-    marginHorizontal: 20
+    marginHorizontal: 20,
   },
   totalText: {
     paddingVertical: 10,
-    marginTop: 0, 
+    marginTop: 0,
     paddingEnd: 10,
-    textAlign:"right",
+    textAlign: "right",
     borderBottomWidth: 0.5,
     borderBottomColor: "#cfcfcf",
     fontFamily: "Roboto",
@@ -292,11 +310,11 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
     fontWeight: "bold",
     color: "#FFFFFF",
-    backgroundColor: "#ef5350"
+    backgroundColor: "#ef5350",
     /* borderRadius: 5,
     shadowColor: "#cfcfcf",
     shadowRadius: 5,
     shadowOffset: { height: 10, width: 10 },
     shadowOpacity: 0.3, */
-  }
+  },
 });
