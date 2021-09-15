@@ -17,7 +17,11 @@ import moment from "moment/min/moment-with-locales";
 import ContextMenu from "react-native-context-menu-view";
 
 import Loading from "../../Components/Loading";
-import { deleteRegistro, findAll } from "../../Services/FirebaseService";
+import {
+  deleteRegistro,
+  findAll,
+  findAllInLastMonth,
+} from "../../Services/FirebaseService";
 import { PeriodDropdown } from "../../Components/PeriodDropdown";
 
 export default function Expense() {
@@ -27,11 +31,24 @@ export default function Expense() {
 
   const [expenses, setExpenses] = useState({});
   const [loading, setLoading] = useState(false);
+  const [selectedPeriod, setSelectedPeriod] = useState(0);
 
   useEffect(() => {
     (async () => {
       setLoading(true);
-      setExpenses(await findAll("Operations", "expense"));
+      if (selectedPeriod == 0) {
+        console.log(`Seleccionado: ${selectedPeriod}`);
+        setExpenses(await findAll("Operations", "expense"));
+      } else if (selectedPeriod == 1) {
+        console.log(`Seleccionado: ${selectedPeriod}`);
+        setExpenses(
+          await findAllInLastMonth(
+            "Operations",
+            "expense",
+            getFirstDayOfMonth()
+          )
+        );
+      }
       setLoading(false);
     })();
   }, []);
@@ -39,7 +56,23 @@ export default function Expense() {
   useFocusEffect(
     useCallback(() => {
       (async () => {
-        setExpenses(await findAll("Operations", "expense"));
+        console.log(selectedPeriod);
+        switch (selectedPeriod) {
+          case 0:
+            setExpenses(await findAll("Operations", "expense"));
+            break;
+          case 1:
+            setExpenses(
+              await findAllInLastMonth(
+                "Operations",
+                "expense",
+                getFirstDayOfMonth()
+              )
+            );
+            break;
+        }
+
+        // setExpenses(await findAll("Operations", "expense"));
         totalExpenses();
       })();
     }, [])
@@ -53,6 +86,27 @@ export default function Expense() {
     return total;
   };
 
+  const selectedItem = (value) => {
+    switch (value) {
+      case 0:
+        console.log("Todos");
+        break;
+      case 1:
+        console.log(getFirstDayOfMonth().toLocaleDateString());
+        break;
+      case 2:
+        console.log("Anterior");
+        break;
+    }
+  };
+
+  const getFirstDayOfMonth = () => {
+    var date = new Date();
+    var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+    //var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    return firstDay;
+  };
+
   return (
     <View style={{ flex: 1, justifyContent: "center" }}>
       {/* <StatusBar backgroundColor = "#af4448" /> */}
@@ -63,7 +117,26 @@ export default function Expense() {
       ) : (
         <></>
       )}
-      {<PeriodDropdown />}
+      {expenses.length > 0 ? (
+        <RNPickerSelect
+          onValueChange={(value) => { 
+            setSelectedPeriod(value);
+            selectedItem(value); 
+          }}
+          pickerProps={{
+            accessibilityLabel: selectedItem.title,
+          }}
+          items={[
+            { label: "Todos", value: 0 },
+            { label: "Último mes", value: 1 },
+            { label: "Mes anterior", value: 2 },
+          ]}
+        >
+          <Text style={styles.rnPickerLabelText}>Seleccionar período</Text>
+        </RNPickerSelect>
+      ) : (
+        <></>
+      )}
       {expenses.length > 0 ? (
         <FlatList
           data={expenses}
@@ -316,5 +389,12 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     shadowOffset: { height: 10, width: 10 },
     shadowOpacity: 0.3, */
+  },
+  rnPickerLabelText: {
+    alignSelf: "flex-end",
+    marginEnd: 50,
+    padding: 5,
+    fontSize: 15,
+    fontWeight: "bold",
   },
 });

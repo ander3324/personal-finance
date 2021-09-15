@@ -179,3 +179,28 @@ export const findById = async (coleccion, documento) => {
 
   return response;
 };
+
+export const findAllInLastMonth = async (collection, type, paramDate) => {
+  console.log(`Colección: ${collection}`);
+  let data = [];
+  await db
+    .collection(collection)
+    .where("usuario", "==", obtenerUsuario().uid)
+    .where("status", "==", 1)
+    .where("tipo", "==", type)
+    .where("date", ">=", paramDate)
+    .orderBy("date", "desc")
+    .get()
+    .then((response) => {
+      response.forEach((doc) => {
+        let obj = doc.data();
+        obj.id = doc.id;
+        data.push(obj);
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  console.log(data);
+  return data;
+};
