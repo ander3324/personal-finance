@@ -201,6 +201,6 @@ export const findAllInLastMonth = async (collection, type, paramDate) => {
     .catch((err) => {
       console.log(err);
     });
-  console.log(data);
+  console.log("Filtro por ultimo mes");
   return data;
 };

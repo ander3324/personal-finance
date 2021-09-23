@@ -31,24 +31,16 @@ export default function Expense() {
 
   const [expenses, setExpenses] = useState({});
   const [loading, setLoading] = useState(false);
-  const [selectedPeriod, setSelectedPeriod] = useState(0);
+  const [selectedPeriod, setSelectedPeriod] = useState(1);
 
   useEffect(() => {
     (async () => {
       setLoading(true);
-      if (selectedPeriod == 0) {
-        console.log(`Seleccionado: ${selectedPeriod}`);
-        setExpenses(await findAll("Operations", "expense"));
-      } else if (selectedPeriod == 1) {
-        console.log(`Seleccionado: ${selectedPeriod}`);
-        setExpenses(
-          await findAllInLastMonth(
-            "Operations",
-            "expense",
-            getFirstDayOfMonth()
-          )
-        );
-      }
+
+      //setExpenses(await findAll("Operations", "expense"));
+
+      selectedItem(selectedPeriod);
+      totalExpenses();
       setLoading(false);
     })();
   }, []);
@@ -56,23 +48,7 @@ export default function Expense() {
   useFocusEffect(
     useCallback(() => {
       (async () => {
-        console.log(selectedPeriod);
-        switch (selectedPeriod) {
-          case 0:
-            setExpenses(await findAll("Operations", "expense"));
-            break;
-          case 1:
-            setExpenses(
-              await findAllInLastMonth(
-                "Operations",
-                "expense",
-                getFirstDayOfMonth()
-              )
-            );
-            break;
-        }
-
-        // setExpenses(await findAll("Operations", "expense"));
+        selectedItem(selectedPeriod);
         totalExpenses();
       })();
     }, [])
@@ -86,18 +62,26 @@ export default function Expense() {
     return total;
   };
 
-  const selectedItem = (value) => {
+  const selectedItem = async (value) => {
+    setLoading(true);
     switch (value) {
       case 0:
+        setExpenses(await findAll("Operations", "expense"));
         console.log("Todos");
         break;
       case 1:
-        console.log(getFirstDayOfMonth().toLocaleDateString());
+        setExpenses(
+          await findAllInLastMonth(
+            "Operations",
+            "expense",
+            getFirstDayOfMonth()
+          )
+        );
         break;
       case 2:
-        console.log("Anterior");
         break;
     }
+    setLoading(false);
   };
 
   const getFirstDayOfMonth = () => {
@@ -119,12 +103,13 @@ export default function Expense() {
       )}
       {expenses.length > 0 ? (
         <RNPickerSelect
-          onValueChange={(value) => { 
-            setSelectedPeriod(value);
-            selectedItem(value); 
+          placeholder =  {{}} 
+          onValueChange={(value) => {
+            //setSelectedPeriod(value);
+            selectedItem(value);
           }}
           pickerProps={{
-            accessibilityLabel: selectedItem.title,
+            accessibilityLabel: this.label
           }}
           items={[
             { label: "Todos", value: 0 },
@@ -140,6 +125,7 @@ export default function Expense() {
       {expenses.length > 0 ? (
         <FlatList
           data={expenses}
+          extraData={true}
           contentContainerStyle={{ paddingBottom: 120 }}
           renderItem={({ item, index, renderSeparator }) => (
             <TouchableHighlight
